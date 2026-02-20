@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Current Score Display with Integrated Point Controls -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#1E1E1E">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Current Score &amp; Point Controls"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Score Display with Left/Right Team Controls -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:baselineAligned="false">
+
+                    <!-- Left Team Controls -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Left Team"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:layout_marginBottom="4dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/pointsUpLeft"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginBottom="2dp"
+                            android:text="+"
+                            android:textSize="16sp"
+                            android:textColor="#FFFFFF"
+                            app:backgroundTint="#4CAF50"
+                            style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/pointsDownLeft"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:text="-"
+                            android:textSize="16sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    </LinearLayout>
+
+                    <!-- Center Score Display -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/points"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="00:00"
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            android:textColor="#00E676"
+                            android:gravity="center"
+                            android:fontFamily="monospace"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/sets"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="0:0"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFB74D"
+                            android:gravity="center"
+                            android:fontFamily="monospace" />
+
+                    </LinearLayout>
+
+                    <!-- Right Team Controls -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Right Team"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:layout_marginBottom="4dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/pointsUpRight"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginBottom="2dp"
+                            android:text="+"
+                            android:textSize="16sp"
+                            android:textColor="#FFFFFF"
+                            app:backgroundTint="#4CAF50"
+                            style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/pointsDownRight"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:text="-"
+                            android:textSize="16sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Ball Control Buttons with Reset Points in Center -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ballLeft"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="Ball Left"
+                        android:textSize="11sp"
+                        android:textColor="#FFFFFF"
+                        app:strokeColor="#666666"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/resetPoints"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:text="Reset Points"
+                        android:textSize="10sp"
+                        android:textColor="#FFFFFF"
+                        app:strokeColor="#666666"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ballRight"
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="Ball Right"
+                        android:textSize="11sp"
+                        android:textColor="#FFFFFF"
+                        app:strokeColor="#666666"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                </LinearLayout>
+
+                <!-- Reset Points Button (Removed as it's now integrated in Ball Control) -->
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Sets and Game Controls Combined -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#1E1E1E">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sets &amp; Game Controls"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Sets Control with Timeout and Switch -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:baselineAligned="false">
+
+                    <!-- Left Sets -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="6dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/setsUpLeft"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:layout_marginBottom="3dp"
+                            android:text="Set +"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:backgroundTint="#2196F3"
+                            style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/setsDownLeft"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:text="Set -"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    </LinearLayout>
+
+                    <!-- Center Game Controls -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginEnd="3dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/timeout"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:layout_marginBottom="3dp"
+                            android:text="Timeout"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/switchButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:text="Switch"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    </LinearLayout>
+
+                    <!-- Right Sets -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="6dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/setsUpRight"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:layout_marginBottom="3dp"
+                            android:text="Set +"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:backgroundTint="#2196F3"
+                            style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/setsDownRight"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:text="Set -"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            app:strokeColor="#666666"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Timeout Display Section -->
+                <TextView
+                    android:id="@+id/timeoutText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Timeout: 30s"
+                    android:textSize="12sp"
+                    android:textColor="#FF9800"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <!-- Timeout Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/timeoutBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="4dp"
+                    android:progress="0"
+                    android:max="100"
+                    android:progressTint="#FF9800"
+                    android:progressBackgroundTint="#333333"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Display Settings -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#1E1E1E">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Display Settings"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Brightness"
+                    android:textSize="12sp"
+                    android:textColor="#BBBBBB"
+                    android:layout_marginBottom="6dp" />
+
+                <SeekBar
+                    android:id="@+id/brightness"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:progress="50"
+                    android:max="100"
+                    android:progressTint="#FF9800"
+                    android:thumbTint="#FF9800"
+                    android:progressBackgroundTint="#333333" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Scroll Text"
+                    app:hintTextColor="#BBBBBB"
+                    app:boxStrokeColor="#666666"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/scrollText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#BBBBBB" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/invert"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="Invert"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        app:strokeColor="#666666"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/reconnect"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="Reconnect"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        app:strokeColor="#666666"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- LED Matrix Selection -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#1B2A1E">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="LED Matrix Selection"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/detect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Detect"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    app:backgroundTint="#388E3C"
+                    style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                <!-- Anchor view for dynamic matrix buttons -->
+                <View
+                    android:id="@+id/matrixButtonsAnchor"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/matrixSelectionLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- System Controls -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#2D1B1B">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="System Controls"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/reset"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="Reset"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        app:backgroundTint="#F44336"
+                        style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/off"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="Turn Off"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        app:backgroundTint="#F44336"
+                        style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</ScrollView>

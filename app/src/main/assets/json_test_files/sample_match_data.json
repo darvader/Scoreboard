@@ -1,0 +1,71 @@
+{
+  "matchSeries": {
+    "league1": {
+      "name": "Test League 1",
+      "description": "Sample volleyball league for testing"
+    },
+    "league2": {
+      "name": "Test League 2",
+      "description": "Another sample league"
+    }
+  },
+  "matchDays": [
+    {
+      "date": "2025-09-21T00:00:00Z",
+      "matches": [
+        {
+          "matchUuid": "test-match-1",
+          "league": "league1",
+          "teamDescription1": "Team Alpha",
+          "teamDescription2": "Team Beta",
+          "status": "LIVE",
+          "sets": [
+            {
+              "setNumber": 1,
+              "team1Score": 25,
+              "team2Score": 23
+            },
+            {
+              "setNumber": 2,
+              "team1Score": 22,
+              "team2Score": 25
+            }
+          ]
+        },
+        {
+          "matchUuid": "test-match-2",
+          "league": "league1",
+          "teamDescription1": "Team Gamma",
+          "teamDescription2": "Team Delta",
+          "status": "SCHEDULED",
+          "sets": []
+        },
+        {
+          "matchUuid": "test-match-3",
+          "league": "league2",
+          "teamDescription1": "Team Epsilon",
+          "teamDescription2": "Team Zeta",
+          "status": "FINISHED",
+          "sets": [
+            {
+              "setNumber": 1,
+              "team1Score": 25,
+              "team2Score": 20
+            },
+            {
+              "setNumber": 2,
+              "team1Score": 25,
+              "team2Score": 18
+            },
+            {
+              "setNumber": 3,
+              "team1Score": 25,
+              "team2Score": 22
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

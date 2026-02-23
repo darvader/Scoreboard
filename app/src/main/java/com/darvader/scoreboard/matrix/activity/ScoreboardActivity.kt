@@ -3,6 +3,7 @@ package com.darvader.scoreboard.matrix.activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.darvader.scoreboard.MainActivity
@@ -12,6 +13,10 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 class ScoreboardActivity : AppCompatActivity() {
+    companion object {
+        var disableInformerForTests: Boolean = false
+    }
+
     lateinit var ledMatrix: LedMatrix
     private var timer: TimerTask? = null
 
@@ -25,19 +30,15 @@ class ScoreboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.ledMatrix = MainActivity.ledMatrix
-
         binding = ActivityScoreboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         ledMatrix.scoreboardActivity = this
-
         // Register with EchoServer to receive LedMatrix detect responses
         MainActivity.echoServer.register(object : com.darvader.scoreboard.EchoServer.MessageListener {
             override fun onMessage(address: java.net.InetAddress, received: String) {
                 ledMatrix.onMessage(address.hostAddress ?: "", received)
             }
         })
-        ledMatrix.detect()
         binding.pointsUpLeft.setOnClickListener { ledMatrix.pointsLeftUp() }
         binding.pointsDownLeft.setOnClickListener { ledMatrix.pointsLeftDown() }
         binding.pointsUpRight.setOnClickListener { ledMatrix.pointsRightUp() }
@@ -65,13 +66,11 @@ class ScoreboardActivity : AppCompatActivity() {
         }
         binding.reset.setOnClickListener { ledMatrix.reset() }
         binding.off.setOnClickListener { ledMatrix.off() }
-
         binding.brightness.setOnSeekBarChangeListener(object : ProgressChangedListener() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 ledMatrix.changeBrightness(progress)
             }
         })
-
         binding.scrollText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -79,13 +78,23 @@ class ScoreboardActivity : AppCompatActivity() {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-
         LiveScoreActivity.scoreboardActivity = this
         ledMatrix.startScoreboard()
         if (LiveScoreActivity.livescoreActivity != null) inform()
+        if (!disableInformerForTests) {
+            timer = Timer("informer", true).schedule(1000, 1000) {
+                runOnUiThread { ledMatrix.updateScore() }
+            }
+        }
+    }
 
-        timer = Timer("informer", true).schedule(1000, 1000) {
-            runOnUiThread { ledMatrix.updateScore() }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         }
     }
 

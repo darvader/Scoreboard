@@ -37,6 +37,7 @@ class ScoreboardActivity : AppCompatActivity() {
                 ledMatrix.onMessage(address.hostAddress ?: "", received)
             }
         })
+        ledMatrix.detect()
         binding.pointsUpLeft.setOnClickListener { ledMatrix.pointsLeftUp() }
         binding.pointsDownLeft.setOnClickListener { ledMatrix.pointsLeftDown() }
         binding.pointsUpRight.setOnClickListener { ledMatrix.pointsRightUp() }

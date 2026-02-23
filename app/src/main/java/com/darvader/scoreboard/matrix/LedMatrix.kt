@@ -34,6 +34,9 @@ class LedMatrix {
         if (received.startsWith("LedMatrix")) {
             if (!discoveredAddresses.contains(hostAddress)) {
                 discoveredAddresses.add(hostAddress)
+                if (discoveredAddresses.size == 1) {
+                    matrixAddress = hostAddress
+                }
                 scoreboardActivity?.runOnUiThread { addButton(hostAddress) }
             }
         }
@@ -221,7 +224,6 @@ class LedMatrix {
             matrixButtons.forEach { it.alpha = 0.5f }
             button.alpha = 1.0f
         }
-        matrixAddress = address
 
         val layoutParams = button.layoutParams as ConstraintLayout.LayoutParams
         val size = matrixButtons.size
@@ -240,5 +242,6 @@ class LedMatrix {
         button.layoutParams = layoutParams
         matrixButtons.add(button)
         activity.binding.matrixSelectionLayout.addView(button)
+        button.alpha = if (address == matrixAddress) 1.0f else 0.5f
     }
 }

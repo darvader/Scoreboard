@@ -64,7 +64,7 @@ This integration allows for fully automated, real-time score display on the LED 
 
 ## License
 
-This project is open source. Please check the license file for details.
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. You are free to use, modify, and share for non-commercial purposes. For commercial use, you must obtain explicit written approval from the copyright holder (Darvader). See the LICENSE file for details.
 
 ## Contributing
 

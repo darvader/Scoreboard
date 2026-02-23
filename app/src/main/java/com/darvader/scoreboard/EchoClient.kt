@@ -14,8 +14,15 @@ import java.net.SocketException
 import java.net.UnknownHostException
 import java.util.ArrayList
 
+interface IEchoClient {
+    fun send(message: String, address: String)
+    fun sendBroadCast(message: String)
+    fun send(message: ByteArray, address: String)
+    fun sendBroadCast(message: ByteArray)
+}
+
 class EchoClient @Throws(SocketException::class, UnknownHostException::class)
-constructor() {
+constructor() : IEchoClient {
     private val socketBroadCast = DatagramSocket()
     private val socket = DatagramSocket()
     private val addresses: List<InetAddress>
@@ -25,7 +32,7 @@ constructor() {
         addresses = listAllBroadcastAddresses()
     }
 
-    fun sendBroadCast(msg: String) {
+    override fun sendBroadCast(msg: String) {
         for (a in addresses) {
             val buf = msg.toByteArray()
             SendAsyncBroadcast(a, buf).execute()
@@ -59,14 +66,14 @@ constructor() {
     }
 
     @Throws(UnknownHostException::class)
-    fun send(msg: String, address: String) {
+    override fun send(msg: String, address: String) {
         if (address == "") return
         val buf = msg.toByteArray()
         SendAsync(address, buf).execute()
     }
 
     @Throws(UnknownHostException::class)
-    fun send(colors: ByteArray, address: String) {
+    override fun send(colors: ByteArray, address: String) {
         SendAsync(address, colors).execute()
     }
 
@@ -80,7 +87,7 @@ constructor() {
         }
     }
 
-    fun sendBroadCast(colors: ByteArray) {
+    override fun sendBroadCast(colors: ByteArray) {
         for (a in addresses) SendAsyncBroadcast(a, colors).execute()
     }
 

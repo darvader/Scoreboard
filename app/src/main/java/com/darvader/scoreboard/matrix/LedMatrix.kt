@@ -4,9 +4,12 @@ import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import com.darvader.scoreboard.EchoClient
+import com.darvader.scoreboard.IEchoClient
 import com.darvader.scoreboard.matrix.activity.ScoreboardActivity
 
-class LedMatrix {
+class LedMatrix(
+    private val echoClient: IEchoClient = Companion.echoClient
+) {
     companion object {
         var matrixAddress = ""
         val echoClient = EchoClient()

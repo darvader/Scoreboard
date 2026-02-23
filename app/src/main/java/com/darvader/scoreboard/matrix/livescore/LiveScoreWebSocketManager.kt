@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.net.URI
 import javax.net.ssl.SSLSocketFactory
 
-class LiveScoreWebSocketManager {
+open class LiveScoreWebSocketManager {
     companion object {
         private const val TAG = "LiveScoreWebSocket"
         const val WEB_SOCKET_URL_DVV = "wss://backend.sams-ticker.de/indoor/dvv"
@@ -27,7 +27,7 @@ class LiveScoreWebSocketManager {
 
     fun setListener(listener: WebSocketListener) { this.listener = listener }
 
-    fun connect(region: String) {
+    open fun connect(region: String) {
         currentWebSocketUrl = when {
             region.contains("tvv") -> WEB_SOCKET_URL_TVV
             region.contains("dvv") -> WEB_SOCKET_URL_DVV
@@ -83,7 +83,7 @@ class LiveScoreWebSocketManager {
         }
     }
 
-    fun disconnect() {
+    open fun disconnect() {
         webSocketClient?.close()
         webSocketClient = null
     }

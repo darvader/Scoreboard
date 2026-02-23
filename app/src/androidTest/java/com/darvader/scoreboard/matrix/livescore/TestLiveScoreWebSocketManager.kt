@@ -1,5 +1,15 @@
 package com.darvader.scoreboard.matrix.livescore
 
+open class LiveScoreWebSocketManager {
+    open fun connect(region: String) {
+        // Default implementation
+    }
+
+    open fun disconnect() {
+        // Default implementation
+    }
+}
+
 class TestLiveScoreWebSocketManager : LiveScoreWebSocketManager() {
     var onScoreUpdate: ((team1: Int, team2: Int) -> Unit)? = null
     fun simulateScoreUpdate(team1: Int, team2: Int) {
@@ -12,4 +22,3 @@ class TestLiveScoreWebSocketManager : LiveScoreWebSocketManager() {
         // Do nothing
     }
 }
-

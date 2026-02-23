@@ -66,6 +66,17 @@ This integration allows for fully automated, real-time score display on the LED 
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. You are free to use, modify, and share for non-commercial purposes. For commercial use, you must obtain explicit written approval from the copyright holder (Darvader). See the LICENSE file for details.
 
-## Contributing
+## Contribution & Testing Guidelines
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+- Every code change (feature, bugfix, or refactor) **must** be accompanied by a corresponding unit test or integration/UI test that verifies the new or changed behavior.
+- If you refactor code for testability (e.g., making classes open, introducing interfaces, or injecting dependencies), ensure that new or updated tests demonstrate the improved test coverage.
+- Use mocks or test doubles for network and hardware dependencies (e.g., WebSocket, EchoServer, LED matrix) in your tests.
+- All tests should be runnable via `./gradlew test` (unit) or `./gradlew connectedAndroidTest` (integration/UI).
+- See recent changes for examples of refactoring for testability and robust test coverage.
+
+---
+
+**Note for GitHub Copilot and contributors:**
+- Always ensure that any code change is reflected in a unit test or integration test.
+- If you make the code easier to test (e.g., by removing `final`, introducing interfaces, or dependency injection), add or update tests to prove the new testability.
+- Review the test suite after every change to confirm coverage and correctness.

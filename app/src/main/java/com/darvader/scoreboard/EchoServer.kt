@@ -6,7 +6,7 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.SocketException
 
-class EchoServer @Throws(SocketException::class)
+open class EchoServer @Throws(SocketException::class)
 constructor() : Thread() {
 
     private val socket = DatagramSocket(4445)
@@ -19,7 +19,7 @@ constructor() : Thread() {
 
     private val listeners = ArrayList<MessageListener>()
 
-    fun register(listener: MessageListener) {
+    open fun register(listener: MessageListener) {
         listeners.add(listener)
     }
 
@@ -46,4 +46,3 @@ constructor() : Thread() {
         socket.close()
     }
 }
-

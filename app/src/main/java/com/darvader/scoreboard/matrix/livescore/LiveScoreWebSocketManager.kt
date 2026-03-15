@@ -1,36 +1,38 @@
 package com.darvader.scoreboard.matrix.livescore
 
 import android.util.Log
+import com.darvader.scoreboard.NetworkConstants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import java.net.URI
 import javax.net.ssl.SSLSocketFactory
 
-open class LiveScoreWebSocketManager {
+class LiveScoreWebSocketManager : ILiveScoreWebSocketManager {
     companion object {
         private const val TAG = "LiveScoreWebSocket"
-        const val WEB_SOCKET_URL_DVV = "wss://backend.sams-ticker.de/indoor/dvv"
-        const val WEB_SOCKET_URL_TVV = "wss://backend.sams-ticker.de/indoor/tvv"
-    }
-
-    interface WebSocketListener {
-        fun onMatchUpdate(payload: JSONObject)
-        fun onWebSocketConnected()
-        fun onWebSocketDisconnected()
-        fun onWebSocketError(error: String)
     }
 
     private var webSocketClient: WebSocketClient? = null
-    private var listener: WebSocketListener? = null
+    private var listener: ILiveScoreWebSocketManager.WebSocketListener? = null
     private var currentWebSocketUrl: String? = null
+    private var reconnecting = false
+    private var reconnectJob: Job? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    fun setListener(listener: WebSocketListener) { this.listener = listener }
+    override fun setListener(listener: ILiveScoreWebSocketManager.WebSocketListener) {
+        this.listener = listener
+    }
 
-    open fun connect(region: String) {
+    override fun connect(region: String) {
         currentWebSocketUrl = when {
-            region.contains("tvv") -> WEB_SOCKET_URL_TVV
-            region.contains("dvv") -> WEB_SOCKET_URL_DVV
+            region.contains("tvv") -> NetworkConstants.WEB_SOCKET_URL_TVV
+            region.contains("dvv") -> NetworkConstants.WEB_SOCKET_URL_DVV
             else -> null
         }
         currentWebSocketUrl?.let { url ->
@@ -45,6 +47,7 @@ open class LiveScoreWebSocketManager {
             val uri = URI(url)
             webSocketClient = object : WebSocketClient(uri) {
                 override fun onOpen(handshakedata: ServerHandshake?) {
+                    reconnecting = false
                     listener?.onWebSocketConnected()
                 }
                 override fun onMessage(message: String?) {
@@ -61,7 +64,7 @@ open class LiveScoreWebSocketManager {
                 }
                 override fun onClose(code: Int, reason: String?, remote: Boolean) {
                     listener?.onWebSocketDisconnected()
-                    if (!remote) reconnect()
+                    if (!remote) scheduleReconnect()
                 }
                 override fun onError(ex: Exception?) {
                     listener?.onWebSocketError(ex?.message ?: "Unknown WebSocket error")
@@ -76,17 +79,24 @@ open class LiveScoreWebSocketManager {
         }
     }
 
-    private fun reconnect() {
-        currentWebSocketUrl?.let { url ->
-            Thread.sleep(5000)
-            initializeWebSocket(url)
+    private fun scheduleReconnect() {
+        if (reconnecting) return
+        reconnecting = true
+        reconnectJob = scope.launch {
+            delay(5000)
+            currentWebSocketUrl?.let { url ->
+                initializeWebSocket(url)
+            }
         }
     }
 
-    open fun disconnect() {
+    override fun disconnect() {
+        reconnecting = false
+        reconnectJob?.cancel()
+        reconnectJob = null
         webSocketClient?.close()
         webSocketClient = null
     }
 
-    fun isConnected(): Boolean = webSocketClient?.isOpen == true
+    override fun isConnected(): Boolean = webSocketClient?.isOpen == true
 }

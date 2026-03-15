@@ -8,49 +8,52 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import com.darvader.scoreboard.NetworkConstants
 import com.darvader.scoreboard.R
+import com.darvader.scoreboard.ScoreboardApp
 import com.darvader.scoreboard.databinding.ActivityLiveScoreBinding
+import com.darvader.scoreboard.matrix.livescore.AssetMatchDataSource
+import com.darvader.scoreboard.matrix.livescore.HttpMatchDataSource
+import com.darvader.scoreboard.matrix.livescore.ILiveScoreWebSocketManager
 import com.darvader.scoreboard.matrix.livescore.League
+import com.darvader.scoreboard.matrix.livescore.LiveScoreWebSocketManager
 import com.darvader.scoreboard.matrix.livescore.Match
 import com.darvader.scoreboard.matrix.livescore.MatchDataService
 import com.darvader.scoreboard.matrix.livescore.MatchManager
-import com.darvader.scoreboard.matrix.livescore.LiveScoreWebSocketManager
 import org.json.JSONObject
 
 class LiveScoreActivity : AppCompatActivity(),
     MatchDataService.MatchDataListener,
     MatchManager.MatchManagerListener,
-    LiveScoreWebSocketManager.WebSocketListener {
+    ILiveScoreWebSocketManager.WebSocketListener {
 
     companion object {
-        const val URL_DVV = "https://backend.sams-ticker.de/live/indoor/tickers/dvv"
-        const val URL_TVV = "https://backend.sams-ticker.de/live/indoor/tickers/tvv"
-        const val TEST_MODE = "TEST_MODE"
         const val TAG = "LiveScoreActivity"
-
-        var scoreboardActivity: ScoreboardActivity? = null
-        var livescoreActivity: LiveScoreActivity? = null
-        var match: Match? = null
-        var selectedLeague: League? = null
     }
 
     private lateinit var binding: ActivityLiveScoreBinding
     private lateinit var matchDataService: MatchDataService
     private lateinit var matchManager: MatchManager
-    lateinit var webSocketManager: LiveScoreWebSocketManager
-    var selectedRegion: String = URL_TVV
+    lateinit var webSocketManager: ILiveScoreWebSocketManager
+    var selectedUrl: String = NetworkConstants.URL_TVV
+    private var match: Match? = null
+    private var selectedLeague: League? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLiveScoreBinding.inflate(layoutInflater)
-        livescoreActivity = this
         setContentView(binding.root)
         initializeServices()
         setupUI()
+        val app = application as ScoreboardApp
+        app.reconnector = {
+            webSocketManager.disconnect()
+            webSocketManager.connect(selectedUrl)
+        }
     }
 
     private fun initializeServices() {
-        matchDataService = MatchDataService(this)
+        matchDataService = MatchDataService()
         matchManager = MatchManager()
         webSocketManager = LiveScoreWebSocketManager()
         matchManager.setListener(this)
@@ -58,7 +61,7 @@ class LiveScoreActivity : AppCompatActivity(),
     }
 
     private fun setupUI() {
-        val regions = arrayOf(URL_TVV, URL_DVV, TEST_MODE)
+        val regions = arrayOf(NetworkConstants.URL_TVV, NetworkConstants.URL_DVV, NetworkConstants.TEST_MODE)
         val regionNames = arrayOf("TVV", "DVV", "TEST MODE")
         val adapter = ArrayAdapter(this, R.layout.spinner_item_dark, regionNames)
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_dark)
@@ -66,10 +69,10 @@ class LiveScoreActivity : AppCompatActivity(),
 
         binding.region.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedRegion = regions[position]
+                selectedUrl = regions[position]
                 loadMatches()
                 webSocketManager.disconnect()
-                webSocketManager.connect(selectedRegion)
+                webSocketManager.connect(selectedUrl)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -86,19 +89,24 @@ class LiveScoreActivity : AppCompatActivity(),
         binding.matches.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 match = selectedLeague?.matches?.get(position)
+                (application as ScoreboardApp).currentMatch = match
                 showSets()
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         binding.startScoreboard.setOnClickListener {
-            val intent = Intent(this, ScoreboardActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ScoreboardActivity::class.java))
         }
     }
 
     private fun loadMatches() {
-        matchDataService.fetchMatchData(selectedRegion, this)
+        val source = if (selectedUrl == NetworkConstants.TEST_MODE) {
+            AssetMatchDataSource(this)
+        } else {
+            HttpMatchDataSource(selectedUrl)
+        }
+        matchDataService.fetchMatchData(source, this)
     }
 
     private fun updateMatchesSpinner(league: League) {
@@ -134,9 +142,11 @@ class LiveScoreActivity : AppCompatActivity(),
     }
 
     override fun onMatchUpdated(match: Match) {
-        if (Companion.match?.id == match.id) {
+        if (this.match?.id == match.id) {
+            val app = application as ScoreboardApp
+            app.currentMatch = match
             runOnUiThread { showSets() }
-            scoreboardActivity?.inform()
+            app.scoreUpdater?.invoke(match)
         }
     }
 

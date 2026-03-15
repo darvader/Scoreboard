@@ -1,6 +1,7 @@
 package com.darvader.scoreboard
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -23,22 +24,17 @@ class ScoreboardUiTest {
     @JvmField
     val activityRule = ActivityTestRule(ScoreboardActivity::class.java, true, false)
 
-    lateinit var testEchoServer: TestEchoServer
+    lateinit var testUdpDiscoveryServer: TestUdpDiscoveryServer
     lateinit var testWebSocket: TestLiveScoreWebSocketManager
 
     @Before
     fun setup() {
-        // Disable informer timer for UI tests
         ScoreboardActivity.disableInformerForTests = true
-        // Initialize static ledMatrix for ScoreboardActivity
-        MainActivity.ledMatrix = LedMatrix()
-        // Replace EchoServer and WebSocket with test doubles
-        testEchoServer = TestEchoServer()
-        MainActivity.echoServer = testEchoServer
+        val app = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as ScoreboardApp
+        app.ledMatrix = LedMatrix()
+        testUdpDiscoveryServer = TestUdpDiscoveryServer()
+        app.udpDiscoveryServer = testUdpDiscoveryServer
         testWebSocket = TestLiveScoreWebSocketManager()
-        // If LiveScoreActivity uses a static reference, replace it here
-        // LiveScoreActivity.webSocketManager = testWebSocket
-        // Now launch the activity
         activityRule.launchActivity(null)
     }
 
@@ -50,44 +46,31 @@ class ScoreboardUiTest {
 
     @Test
     fun testMatrixDetectAndSelect() {
-        Espresso.onIdle() // Wait for UI to be idle
+        Espresso.onIdle()
         onView(withId(R.id.detect)).perform(scrollTo(), click())
-        // Simulate matrix response
-        testEchoServer.simulateMatrixResponse("192.168.1.101")
-        // Check that the button for the matrix appears and is selected
+        testUdpDiscoveryServer.simulateMatrixResponse("192.168.1.101")
+        Thread.sleep(500)
         onView(withText("101")).check(matches(withText("101")))
     }
 
     @Test
     fun testLiveScoreTVV() {
-        // Simulate TVV WebSocket score update
         testWebSocket.simulateScoreUpdate(10, 8)
-        // Check that the UI updates accordingly (example: points text)
-        // onView(withId(R.id.points)).check(matches(withText("10:08")))
     }
 
     @Test
     fun testLiveScoreDVV() {
-        // Simulate DVV WebSocket score update
         testWebSocket.simulateScoreUpdate(15, 12)
-        // Check that the UI updates accordingly (example: points text)
-        // onView(withId(R.id.points)).check(matches(withText("15:12")))
     }
 
     @Test
     fun testLiveScoreRegionSwitchAndMatrixSelection() {
-        // Simulate TVV region
         testWebSocket.simulateScoreUpdate(10, 8)
-        // TODO: Add code to switch region in UI if needed
-        // Simulate DVV region
         testWebSocket.simulateScoreUpdate(15, 12)
-        Espresso.onIdle() // Wait for UI to be idle
-        // Simulate matrix detection and selection
+        Espresso.onIdle()
         onView(withId(R.id.detect)).perform(scrollTo(), click())
-        testEchoServer.simulateMatrixResponse("192.168.1.102")
+        testUdpDiscoveryServer.simulateMatrixResponse("192.168.1.102")
+        Thread.sleep(500)
         onView(withText("102")).perform(scrollTo(), click())
-        // Check that the matrix button is selected (alpha = 1.0f) and points are updated
-        // onView(withText("102")).check(matches(isSelected())) // Custom matcher may be needed
-        // onView(withId(R.id.points)).check(matches(withText("15:12")))
     }
 }

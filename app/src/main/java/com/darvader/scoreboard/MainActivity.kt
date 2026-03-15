@@ -8,19 +8,14 @@ import com.darvader.scoreboard.matrix.activity.LiveScoreActivity
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        lateinit var ledMatrix: LedMatrix
-        lateinit var echoServer: EchoServer
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ledMatrix = LedMatrix()
-        echoServer = EchoServer()
-        echoServer.isDaemon = true
-        echoServer.start()
-        val intent = Intent(this, LiveScoreActivity::class.java)
-        startActivity(intent)
+        val app = application as ScoreboardApp
+        app.ledMatrix = LedMatrix()
+        app.udpDiscoveryServer = UdpDiscoveryServer()
+        app.udpDiscoveryServer.isDaemon = true
+        app.udpDiscoveryServer.start()
+        startActivity(Intent(this, LiveScoreActivity::class.java))
         finish()
     }
 }

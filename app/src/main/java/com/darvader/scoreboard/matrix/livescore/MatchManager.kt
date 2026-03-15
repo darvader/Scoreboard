@@ -21,10 +21,15 @@ class MatchManager {
     private var matchSeries: JSONObject = JSONObject()
     private var matchesPayload: JSONObject = JSONObject()
 
-    val matches = ArrayList<Match>()
-    val matchesMap = HashMap<String, Match>()
-    val leagues = ArrayList<League>()
-    val leaguesMap = HashMap<String, League>()
+    private val _matches = ArrayList<Match>()
+    private val _matchesMap = HashMap<String, Match>()
+    private val _leagues = ArrayList<League>()
+    private val _leaguesMap = HashMap<String, League>()
+
+    val matches: List<Match> get() = _matches
+    val matchesMap: Map<String, Match> get() = _matchesMap
+    val leagues: List<League> get() = _leagues
+    val leaguesMap: Map<String, League> get() = _leaguesMap
 
     fun setListener(listener: MatchManagerListener) { this.listener = listener }
 
@@ -42,7 +47,7 @@ class MatchManager {
                     (0 until matchesArray.length()).forEach { parseMatch(matchesArray, it) }
                 }
             }
-            listener?.onMatchesParsed(leagues.toList())
+            listener?.onMatchesParsed(_leagues.toList())
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing matches: ${e.message}")
             listener?.onParsingError(e.message ?: "Unknown parsing error")
@@ -51,26 +56,25 @@ class MatchManager {
 
     private fun parseMatch(matchesArray: JSONArray, index: Int) {
         val matchJSON = matchesArray.getJSONObject(index)
-        val match = Match(matchJSON)
+        val match = Match.fromJson(matchJSON)
         match.update(matchesPayload)
-        matchesMap[match.id] = match
+        _matchesMap[match.id] = match
 
-        var league: League? = leaguesMap[match.league]
+        var league: League? = _leaguesMap[match.league]
         if (league == null) {
             val leagueJSON = matchSeries.getJSONObject(match.league)
-            league = League(leagueJSON)
-            leaguesMap[match.league] = league
-            leagues.add(league)
+            league = League.fromJson(leagueJSON)
+            _leaguesMap[match.league] = league
+            _leagues.add(league)
         }
-        league.matchesMap[match.id] = match
-        league.matches.add(match)
-        matches.add(match)
+        league.addMatch(match)
+        _matches.add(match)
     }
 
     fun updateMatch(payload: JSONObject) {
         try {
             val uuid = payload.getString("matchUuid")
-            matchesMap[uuid]?.let {
+            _matchesMap[uuid]?.let {
                 it.updateMatch(payload)
                 listener?.onMatchUpdated(it)
             }
@@ -80,7 +84,7 @@ class MatchManager {
     }
 
     private fun clearData() {
-        matches.clear(); matchesMap.clear(); leagues.clear(); leaguesMap.clear()
+        _matches.clear(); _matchesMap.clear(); _leagues.clear(); _leaguesMap.clear()
         matchSeries = JSONObject(); matchesPayload = JSONObject()
     }
 }

@@ -1,12 +1,12 @@
 package com.darvader.scoreboard.matrix.livescore
 
-import android.content.Context
 import android.util.Log
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class MatchDataService(private val context: Context) {
+class MatchDataService {
     companion object {
         private const val TAG = "MatchDataService"
     }
@@ -16,42 +16,19 @@ class MatchDataService(private val context: Context) {
         fun onMatchDataError(error: String)
     }
 
-    fun fetchMatchData(source: String, listener: MatchDataListener) {
-        Thread {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    fun fetchMatchData(source: MatchDataSource, listener: MatchDataListener) {
+        scope.launch {
             try {
-                val message = if (source == "TEST_MODE") loadTestData() else fetchJsonFromUrl(source)
+                val message = source.fetchData()
                 message?.let {
                     listener.onMatchDataReceived(JSONObject(it))
-                } ?: listener.onMatchDataError("Failed to load match data from $source")
+                } ?: listener.onMatchDataError("Failed to load match data")
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching match data: ${e.message}")
                 listener.onMatchDataError(e.message ?: "Unknown error")
             }
-        }.start()
-    }
-
-    private fun fetchJsonFromUrl(url: String): String? {
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-        return try {
-            val response = client.newCall(request).execute()
-            if (response.isSuccessful) response.body?.string() else null
-        } catch (e: Exception) {
-            Log.e(TAG, "Error fetching JSON: ${e.message}")
-            null
-        }
-    }
-
-    private fun loadTestData(): String? {
-        return try {
-            val inputStream = context.assets.open("json_test_files/sample_match_data.json")
-            val buffer = ByteArray(inputStream.available())
-            inputStream.read(buffer)
-            inputStream.close()
-            String(buffer, Charsets.UTF_8)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error reading test data: ${e.message}")
-            null
         }
     }
 }

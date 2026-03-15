@@ -1,11 +1,14 @@
 package com.darvader.scoreboard.matrix.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import com.darvader.scoreboard.ScoreboardService
 import com.darvader.scoreboard.MainActivity
 import com.darvader.scoreboard.databinding.ActivityScoreboardBinding
 import com.darvader.scoreboard.matrix.LedMatrix
@@ -32,6 +35,8 @@ class ScoreboardActivity : AppCompatActivity() {
         this.ledMatrix = MainActivity.ledMatrix
         binding = ActivityScoreboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        startForegroundService(Intent(this, ScoreboardService::class.java))
         ledMatrix.scoreboardActivity = this
         // Register with EchoServer to receive LedMatrix detect responses
         MainActivity.echoServer.register(object : com.darvader.scoreboard.EchoServer.MessageListener {
@@ -131,6 +136,7 @@ class ScoreboardActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        stopService(Intent(this, ScoreboardService::class.java))
         super.onDestroy()
         timer?.cancel()
     }

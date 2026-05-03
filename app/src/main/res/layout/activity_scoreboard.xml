@@ -494,16 +494,37 @@
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="12dp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/detect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Detect"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    app:backgroundTint="#388E3C"
-                    style="@style/Widget.Material3.Button.UnelevatedButton" />
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/detect"
+                        style="@style/Widget.Material3.Button.UnelevatedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:text="Detect"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        app:backgroundTint="#388E3C" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/wifiSetup"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:text="WiFi Setup"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        app:strokeColor="#666666" />
+
+                </LinearLayout>
 
                 <!-- Anchor view for dynamic matrix buttons -->
                 <View

@@ -23,6 +23,8 @@ import com.darvader.scoreboard.databinding.ActivityScoreboardBinding
 import com.darvader.scoreboard.matrix.LedMatrix
 import com.darvader.scoreboard.matrix.ScoreDisplay
 import com.darvader.scoreboard.matrix.livescore.Match
+import com.darvader.scoreboard.matrix.activity.MatrixWifiSetupActivity.Companion.PREFS_NAME
+import com.darvader.scoreboard.matrix.activity.MatrixWifiSetupActivity.Companion.PREF_DETECT_ON_RESUME
 import java.net.InetAddress
 import java.util.*
 import kotlin.concurrent.schedule
@@ -74,6 +76,9 @@ class ScoreboardActivity : AppCompatActivity(), ScoreDisplay {
             app.reconnector?.invoke()
             ledMatrix.updateScore()
         }
+        binding.wifiSetup.setOnClickListener {
+            startActivity(Intent(this, MatrixWifiSetupActivity::class.java))
+        }
         binding.detect.setOnClickListener { ledMatrix.detect() }
         binding.timeout.setOnClickListener {
             ledMatrix.timeout()
@@ -113,6 +118,15 @@ class ScoreboardActivity : AppCompatActivity(), ScoreDisplay {
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
             insetsController.hide(WindowInsetsCompat.Type.systemBars())
             insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        if (prefs.getBoolean(PREF_DETECT_ON_RESUME, false)) {
+            prefs.edit().putBoolean(PREF_DETECT_ON_RESUME, false).apply()
+            ledMatrix.detect()
         }
     }
 

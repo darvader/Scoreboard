@@ -8,6 +8,9 @@ class NetworkConstantsTest {
     fun testPortValues() {
         assertEquals(4210, NetworkConstants.UDP_COMMAND_PORT)
         assertEquals(4445, NetworkConstants.UDP_DISCOVERY_PORT)
+        assertEquals("192.168.4.1", NetworkConstants.LED_MATRIX_SETUP_HOST)
+        assertEquals("http://192.168.4.1", NetworkConstants.LED_MATRIX_SETUP_BASE_URL)
+        assertEquals("LedMatrix-Setup", NetworkConstants.LED_MATRIX_SETUP_SSID)
     }
 
     @Test

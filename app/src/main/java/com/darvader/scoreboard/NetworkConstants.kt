@@ -3,6 +3,9 @@ package com.darvader.scoreboard
 object NetworkConstants {
     const val UDP_COMMAND_PORT = 4210
     const val UDP_DISCOVERY_PORT = 4445
+    const val LED_MATRIX_SETUP_SSID = "LedMatrix-Setup"
+    const val LED_MATRIX_SETUP_HOST = "192.168.4.1"
+    const val LED_MATRIX_SETUP_BASE_URL = "http://192.168.4.1"
     const val MAX_POINTS = 99
     const val MAX_SETS = 9
     const val TIMEOUT_DURATION_MS = 30_000L
